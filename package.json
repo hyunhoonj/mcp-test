@@ -1,21 +1,39 @@
 {
-  "name": "mcp-test-server",
+  "name": "youth-activity-mcp-server",
   "version": "1.0.0",
-  "description": "A custom MCP server built from scratch",
+  "description": "MCP server for Korea Youth Activity Information API",
   "type": "module",
   "bin": {
-    "mcp-test-server": "./build/index.js"
+    "youth-activity-mcp": "./build/index.js"
   },
+  "main": "./build/index.js",
+  "files": [
+    "build/**/*",
+    "src/**/*",
+    ".env.example",
+    "readme.md",
+    "QUICKSTART.md"
+  ],
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
     "start": "node build/index.js",
-    "dev": "tsc && node build/index.js"
+    "dev": "tsc && node build/index.js",
+    "prepare": "npm run build",
+    "postinstall": "node -e \"console.log('\\n🎉 청소년 활동 정보 MCP 서버가 설치되었습니다!\\n\\n다음 단계:\\n1. .env 파일을 생성하고 YOUTH_API_SERVICE_KEY를 설정하세요\\n2. Claude Desktop 설정에 추가하세요\\n\\n자세한 내용은 README.md를 참고하세요.\\n')\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hyunhoonj/mcp-test.git"
   },
   "keywords": [
     "mcp",
     "server",
-    "ai"
+    "ai",
+    "youth",
+    "activity",
+    "korea",
+    "open-data"
   ],
   "author": "",
   "license": "MIT",
@@ -29,5 +47,8 @@
     "@types/node": "^22.10.0",
     "@types/xml2js": "^0.4.14",
     "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
