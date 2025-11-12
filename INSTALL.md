@@ -7,7 +7,7 @@
 ### 1. 전역 설치
 
 ```bash
-npm install -g git+https://github.com/hyunhoonj/mcp-test.git
+npm install -g git+https://github.com/hyunhoonj/mcp-server-youth-activity.git
 ```
 
 이 명령어 하나로:
@@ -105,7 +105,7 @@ npm list -g youth-activity-mcp-server
 
 ```bash
 # 프로젝트 디렉토리에서
-npm install git+https://github.com/hyunhoonj/mcp-test.git
+npm install git+https://github.com/hyunhoonj/mcp-server-youth-activity.git
 ```
 
 Claude Desktop 설정:
@@ -131,11 +131,11 @@ Claude Desktop 설정:
 
 ```bash
 # 전역 설치한 경우
-npm update -g git+https://github.com/hyunhoonj/mcp-test.git
+npm update -g git+https://github.com/hyunhoonj/mcp-server-youth-activity.git
 
 # 또는 재설치
 npm uninstall -g youth-activity-mcp-server
-npm install -g git+https://github.com/hyunhoonj/mcp-test.git
+npm install -g git+https://github.com/hyunhoonj/mcp-server-youth-activity.git
 ```
 
 ## 제거
@@ -172,7 +172,7 @@ echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.zshrc
 source ~/.zshrc
 
 # 그 다음 다시 설치
-npm install -g git+https://github.com/hyunhoonj/mcp-test.git
+npm install -g git+https://github.com/hyunhoonj/mcp-server-youth-activity.git
 ```
 
 ### 3. 빌드 오류
@@ -201,5 +201,5 @@ Q: 경기도의 문화체험 프로그램 알려줘
 
 ## 더 알아보기
 
-- [README.md](https://github.com/hyunhoonj/mcp-test/blob/main/readme.md)
-- [QUICKSTART.md](https://github.com/hyunhoonj/mcp-test/blob/main/QUICKSTART.md)
+- [README.md](https://github.com/hyunhoonj/mcp-server-youth-activity/blob/main/readme.md)
+- [QUICKSTART.md](https://github.com/hyunhoonj/mcp-server-youth-activity/blob/main/QUICKSTART.md)

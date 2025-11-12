@@ -39,7 +39,7 @@
 
 ```bash
 # NPM으로 GitHub에서 직접 설치
-npm install -g git+https://github.com/hyunhoonj/mcp-test.git
+npm install -g git+https://github.com/hyunhoonj/mcp-server-youth-activity.git
 ```
 
 이 명령어로 자동으로:
@@ -82,8 +82,8 @@ $env:YOUTH_API_SERVICE_KEY="your_api_key_here"
 ### 1. 저장소 클론
 
 ```bash
-git clone https://github.com/hyunhoonj/mcp-test.git
-cd mcp-test
+git clone https://github.com/hyunhoonj/mcp-server-youth-activity.git
+cd mcp-server-youth-activity
 ```
 
 ### 2. 패키지 설치
@@ -159,7 +159,7 @@ Claude Desktop 설정:
   "mcpServers": {
     "youth-activity": {
       "command": "node",
-      "args": ["/절대/경로/mcp-test/build/index.js"],
+      "args": ["/절대/경로/mcp-server-youth-activity/build/index.js"],
       "env": {
         "YOUTH_API_SERVICE_KEY": "your_api_key_here"
       }
@@ -174,8 +174,8 @@ Claude Desktop 설정:
   "mcpServers": {
     "youth-activity": {
       "command": "node",
-      "args": ["/절대/경로/mcp-test/build/index.js"],
-      "cwd": "/절대/경로/mcp-test"
+      "args": ["/절대/경로/mcp-server-youth-activity/build/index.js"],
+      "cwd": "/절대/경로/mcp-server-youth-activity"
     }
   }
 }
@@ -204,7 +204,7 @@ Claude: (get_sido_list로 서울시 코드 확인 후)
 ## 프로젝트 구조
 
 ```
-mcp-test/
+mcp-server-youth-activity/
 ├── src/
 │   ├── index.ts              # MCP 서버 메인 코드
 │   └── youthApiClient.ts     # 청소년 활동 API 클라이언트
