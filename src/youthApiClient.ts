@@ -45,6 +45,10 @@ export class YouthApiClient {
    */
   private async parseXmlResponse(xmlData: string): Promise<any> {
     try {
+      // 디버깅: 응답 데이터 로깅
+      console.error("API 응답 타입:", typeof xmlData);
+      console.error("API 응답 앞 100자:", xmlData.substring(0, 100));
+
       const result = await parseStringPromise(xmlData, {
         explicitArray: false,
         ignoreAttrs: true,
@@ -52,6 +56,7 @@ export class YouthApiClient {
       });
       return result;
     } catch (error) {
+      console.error("XML 파싱 에러. 전체 응답:", xmlData);
       throw new Error(`XML 파싱 실패: ${error}`);
     }
   }
