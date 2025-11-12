@@ -78,9 +78,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            ctpvCode: {
+            sido: {
               type: "string",
-              description: "시도코드 (예: 11 - 서울특별시)",
+              description: "시도명 (예: 서울, 부산광역시, 경기도)",
             },
             pageNo: {
               type: "number",
@@ -91,12 +91,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description: "한 페이지 결과 수 (기본값: 100)",
             },
           },
-          required: ["ctpvCode"],
+          required: ["sido"],
         },
       },
       {
         name: "search_youth_activities",
-        description: "청소년 활동 정보를 검색합니다. 지역, 키워드 등으로 필터링 가능합니다",
+        description: "청소년 활동 프로그램을 검색합니다. 프로그램명, 기관명, 지역, 기간 등으로 필터링 가능합니다",
         inputSchema: {
           type: "object",
           properties: {
@@ -108,17 +108,54 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: "number",
               description: "한 페이지 결과 수 (기본값: 10)",
             },
-            schCtpvCode: {
+            atName: {
               type: "string",
-              description: "검색할 시도코드 (선택사항)",
+              description: "프로그램명 (선택사항)",
             },
-            schSigunguCode: {
+            orgName: {
               type: "string",
-              description: "검색할 시군구코드 (선택사항)",
+              description: "주최자(기관명) (선택사항)",
             },
-            keyword: {
+            sido: {
               type: "string",
-              description: "검색 키워드 (선택사항)",
+              description: "시도명 (선택사항, 예: 서울, 부산광역시)",
+            },
+            startDate: {
+              type: "string",
+              description: "일활동기간시작일 (선택사항, YYYYMMDD 형식)",
+            },
+            endDate: {
+              type: "string",
+              description: "일활동기간종료일 (선택사항, YYYYMMDD 형식)",
+            },
+          },
+        },
+      },
+      {
+        name: "get_facility_group_list",
+        description: "청소년 시설 그룹 목록을 조회합니다. 시도, 기관명, 기관유형으로 필터링 가능합니다",
+        inputSchema: {
+          type: "object",
+          properties: {
+            pageNo: {
+              type: "number",
+              description: "페이지 번호 (기본값: 1)",
+            },
+            numOfRows: {
+              type: "number",
+              description: "한 페이지 결과 수 (기본값: 10)",
+            },
+            sido: {
+              type: "string",
+              description: "시도명 (선택사항)",
+            },
+            stName: {
+              type: "string",
+              description: "기관명 (선택사항)",
+            },
+            gName: {
+              type: "string",
+              description: "기관유형명 (선택사항)",
             },
           },
         },
@@ -196,12 +233,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "get_sigungu_list": {
-        const ctpvCode = args?.ctpvCode as string;
+        const sido = args?.sido as string;
         const pageNo = (args?.pageNo as number) || 1;
         const numOfRows = (args?.numOfRows as number) || 100;
 
         const result = await youthApiClient.getSigunguList(
-          ctpvCode,
+          sido,
           pageNo,
           numOfRows
         );
@@ -238,9 +275,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const params = {
           pageNo: (args?.pageNo as number) || 1,
           numOfRows: (args?.numOfRows as number) || 10,
-          schCtpvCode: args?.schCtpvCode as string | undefined,
-          schSigunguCode: args?.schSigunguCode as string | undefined,
-          keyword: args?.keyword as string | undefined,
+          atName: args?.atName as string | undefined,
+          orgName: args?.orgName as string | undefined,
+          sido: args?.sido as string | undefined,
+          startDate: args?.startDate as string | undefined,
+          endDate: args?.endDate as string | undefined,
         };
 
         const result = await youthApiClient.searchActivities(params);
@@ -280,6 +319,58 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           resultText += "\n";
         } else {
           resultText += "검색된 활동이 없습니다.\n\n";
+        }
+
+        resultText += `페이지: ${params.pageNo}/${Math.ceil(
+          result.totalCount / params.numOfRows
+        )}`;
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: resultText,
+            },
+          ],
+        };
+      }
+
+      case "get_facility_group_list": {
+        const params = {
+          pageNo: (args?.pageNo as number) || 1,
+          numOfRows: (args?.numOfRows as number) || 10,
+          sido: args?.sido as string | undefined,
+          stName: args?.stName as string | undefined,
+          gName: args?.gName as string | undefined,
+        };
+
+        const result = await youthApiClient.getFacilityGroupList(params);
+
+        let resultText = `🏢 청소년 시설 그룹 목록 (전체 ${result.totalCount}개)\n\n`;
+
+        if (Array.isArray(result.items)) {
+          result.items.forEach((item: any, index: number) => {
+            const itemNum = (params.pageNo - 1) * params.numOfRows + index + 1;
+            resultText += `${itemNum}. ${item.faciNm || "시설명 없음"}\n`;
+            if (item.instlNm)
+              resultText += `   기관명: ${item.instlNm}\n`;
+            if (item.gNm)
+              resultText += `   유형: ${item.gNm}\n`;
+            if (item.rdnmadr)
+              resultText += `   주소: ${item.rdnmadr}\n`;
+            if (item.phoneNumber)
+              resultText += `   전화: ${item.phoneNumber}\n`;
+            resultText += "\n";
+          });
+        } else if (result.items) {
+          resultText += `1. ${result.items.faciNm || "시설명 없음"}\n`;
+          if (result.items.instlNm)
+            resultText += `   기관명: ${result.items.instlNm}\n`;
+          if (result.items.gNm)
+            resultText += `   유형: ${result.items.gNm}\n`;
+          resultText += "\n";
+        } else {
+          resultText += "검색된 시설이 없습니다.\n\n";
         }
 
         resultText += `페이지: ${params.pageNo}/${Math.ceil(

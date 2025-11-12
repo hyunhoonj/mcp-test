@@ -111,15 +111,17 @@ export class YouthApiClient {
   }
 
   /**
-   * 활동 정보 검색
+   * 청소년 활동 프로그램 목록 조회
    * @param params 검색 파라미터
    */
   async searchActivities(params: {
     pageNo?: number;
     numOfRows?: number;
-    schCtpvCode?: string; // 시도코드
-    schSigunguCode?: string; // 시군구코드
-    keyword?: string; // 검색어
+    atName?: string; // 프로그램명
+    orgName?: string; // 주최자(기관명)
+    sido?: string; // 시도
+    startDate?: string; // 일활동기간시작일 (YYYYMMDD)
+    endDate?: string; // 일활동기간종료일 (YYYYMMDD)
   }): Promise<any> {
     try {
       const response = await this.client.get("/getJtvtsProgrmList", {
@@ -127,9 +129,67 @@ export class YouthApiClient {
           serviceKey: this.serviceKey,
           pageNo: params.pageNo || 1,
           numOfRows: params.numOfRows || 10,
-          schCtpvCode: params.schCtpvCode,
-          schSigunguCode: params.schSigunguCode,
-          keyword: params.keyword,
+          atName: params.atName,
+          orgName: params.orgName,
+          sido: params.sido,
+          startDate: params.startDate,
+          endDate: params.endDate,
+        },
+      });
+
+      const parsedData = await this.parseXmlResponse(response.data);
+
+      if (parsedData.response) {
+        const header = parsedData.response.header;
+        const body = parsedData.response.body;
+
+        if (header?.resultCode !== "00") {
+          throw new Error(
+            `API 오류: ${header?.resultMsg || "알 수 없는 오류"}`
+          );
+        }
+
+        return {
+          totalCount: parseInt(body?.totalCount || "0"),
+          items: body?.items?.item || [],
+          pageNo: params.pageNo || 1,
+          numOfRows: params.numOfRows || 10,
+        };
+      }
+
+      throw new Error("예상치 못한 응답 형식");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          `API 호출 실패: ${error.message}${
+            error.response?.data ? ` - ${error.response.data}` : ""
+          }`
+        );
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * 청소년 시설 그룹 목록 조회
+   * @param params 검색 파라미터
+   */
+  async getFacilityGroupList(params: {
+    pageNo?: number;
+    numOfRows?: number;
+    sido?: string; // 시도
+    stName?: string; // 기관명
+    gName?: string; // 기관유형명
+  }): Promise<any> {
+    try {
+      const response = await this.client.get("/getJltlsGrpList", {
+        params: {
+          serviceKey: this.serviceKey,
+          pageNo: params.pageNo || 1,
+          numOfRows: params.numOfRows || 10,
+          sido: params.sido,
+          stName: params.stName,
+          gName: params.gName,
         },
       });
 
@@ -168,12 +228,12 @@ export class YouthApiClient {
 
   /**
    * 시군구 목록 조회
-   * @param ctpvCode 시도코드
+   * @param sido 시도명 (예: 서울, 부산광역시)
    * @param pageNo 페이지 번호
    * @param numOfRows 한 페이지 결과 수
    */
   async getSigunguList(
-    ctpvCode: string,
+    sido: string,
     pageNo: number = 1,
     numOfRows: number = 100
   ): Promise<any> {
@@ -181,7 +241,7 @@ export class YouthApiClient {
       const response = await this.client.get("/getSigunguList", {
         params: {
           serviceKey: this.serviceKey,
-          ctpvCode,
+          sido,
           pageNo,
           numOfRows,
         },
