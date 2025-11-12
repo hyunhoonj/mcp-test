@@ -1,0 +1,29 @@
+{
+  "name": "mcp-test-server",
+  "version": "1.0.0",
+  "description": "A custom MCP server built from scratch",
+  "type": "module",
+  "bin": {
+    "mcp-test-server": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "node build/index.js",
+    "dev": "tsc && node build/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "server",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+}
