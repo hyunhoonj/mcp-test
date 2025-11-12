@@ -33,21 +33,72 @@
 1. **search-guide** - 청소년 활동 검색 방법 안내
 2. **region-guide** - 지역 코드 조회 방법 안내
 
-## 설치 및 설정
+## 빠른 설치 (권장)
 
-### 1. 패키지 설치
+**Wrapper 방식으로 클론 없이 바로 설치:**
+
+```bash
+# NPM으로 GitHub에서 직접 설치
+npm install -g git+https://github.com/hyunhoonj/mcp-server-youth-activity.git
+```
+
+이 명령어로 자동으로:
+- ✅ 다운로드 및 의존성 설치
+- ✅ TypeScript 빌드
+- ✅ 전역 명령어 등록 완료
+
+**API 키 설정:**
+```bash
+# macOS/Linux
+export YOUTH_API_SERVICE_KEY="your_api_key_here"
+
+# Windows PowerShell
+$env:YOUTH_API_SERVICE_KEY="your_api_key_here"
+```
+
+**Claude Desktop 설정:**
+```json
+{
+  "mcpServers": {
+    "youth-activity": {
+      "command": "youth-activity-mcp",
+      "env": {
+        "YOUTH_API_SERVICE_KEY": "your_api_key_here"
+      }
+    }
+  }
+}
+```
+
+📖 **자세한 설치 가이드**: [INSTALL.md](./INSTALL.md)
+
+---
+
+## 개발자를 위한 설치 (소스 빌드)
+
+<details>
+<summary>클론하여 직접 빌드하기 (클릭하여 펼치기)</summary>
+
+### 1. 저장소 클론
+
+```bash
+git clone https://github.com/hyunhoonj/mcp-server-youth-activity.git
+cd mcp-server-youth-activity
+```
+
+### 2. 패키지 설치
 
 ```bash
 npm install
 ```
 
-### 2. API 키 발급
+### 3. API 키 발급
 
 1. [공공데이터포털](https://www.data.go.kr/) 회원가입
 2. 청소년 활동 정보 서비스 API 신청
 3. 발급받은 서비스 키 확인
 
-### 3. 환경 변수 설정
+### 4. 환경 변수 설정
 
 `.env` 파일을 생성하고 API 키를 설정합니다:
 
@@ -61,41 +112,56 @@ cp .env.example .env
 YOUTH_API_SERVICE_KEY=your_service_key_here
 ```
 
-### 4. 빌드
+### 5. 빌드
 
 ```bash
 npm run build
 ```
 
-## 실행
+</details>
 
-### 직접 실행
+## 사용 방법
 
-```bash
-npm start
-```
+### NPM 전역 설치 후 (권장)
 
-### 개발 모드
-
-```bash
-npm run dev
-```
-
-## Claude Desktop에서 사용하기
-
-Claude Desktop의 설정 파일(`claude_desktop_config.json`)에 다음을 추가하세요:
-
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+설치만 하면 끝! Claude Desktop 설정에서 바로 사용:
 
 ```json
 {
   "mcpServers": {
     "youth-activity": {
-      "command": "node",
-      "args": ["/절대/경로/mcp-test/build/index.js"],
+      "command": "youth-activity-mcp",
       "env": {
-        "YOUTH_API_SERVICE_KEY": "your_service_key_here"
+        "YOUTH_API_SERVICE_KEY": "your_api_key_here"
+      }
+    }
+  }
+}
+```
+
+### 소스 빌드 후 직접 실행
+
+<details>
+<summary>개발 모드로 실행하기 (클릭하여 펼치기)</summary>
+
+```bash
+# 개발 모드
+npm run dev
+
+# 또는 빌드 후 실행
+npm run build
+npm start
+```
+
+Claude Desktop 설정:
+```json
+{
+  "mcpServers": {
+    "youth-activity": {
+      "command": "node",
+      "args": ["/절대/경로/mcp-server-youth-activity/build/index.js"],
+      "env": {
+        "YOUTH_API_SERVICE_KEY": "your_api_key_here"
       }
     }
   }
@@ -103,18 +169,25 @@ Claude Desktop의 설정 파일(`claude_desktop_config.json`)에 다음을 추�
 ```
 
 또는 `.env` 파일을 사용하는 경우:
-
 ```json
 {
   "mcpServers": {
     "youth-activity": {
       "command": "node",
-      "args": ["/절대/경로/mcp-test/build/index.js"],
-      "cwd": "/절대/경로/mcp-test"
+      "args": ["/절대/경로/mcp-server-youth-activity/build/index.js"],
+      "cwd": "/절대/경로/mcp-server-youth-activity"
     }
   }
 }
 ```
+
+</details>
+
+### Claude Desktop 설정 파일 위치
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
 ## 사용 예시
 
@@ -131,7 +204,7 @@ Claude: (get_sido_list로 서울시 코드 확인 후)
 ## 프로젝트 구조
 
 ```
-mcp-test/
+mcp-server-youth-activity/
 ├── src/
 │   ├── index.ts              # MCP 서버 메인 코드
 │   └── youthApiClient.ts     # 청소년 활동 API 클라이언트
